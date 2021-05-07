@@ -7,3 +7,5 @@
 3. Clone this repository to your machine
 4. Go to /bakuretsu/bakuretsu (the same level as package.json) and run `npm install`
 5. Try running `npm start` and go on localhost:3000 on browser
+
+testing123
