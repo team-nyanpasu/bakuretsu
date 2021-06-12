@@ -1,11 +1,24 @@
 html
   head
-    title= title
+    title=title
   body
     h1 bakuretsu v1.0.0
     p developed by team nyanpasu
     br
+    p upload file
     form(action='fileupload', enctype='multipart/form-data', method='post')
       input(type="file", name="fileupload")
+      br
+      input(type="submit")
+    br
+    p search by name
+    form(action='search_name', enctype='text', method='get')
+      input(type="text", name="search")
+      br
+      input(type="submit")
+    br
+    p search by code
+    form(action='search_hash', enctype='text', method='get')
+      input(type="text", name="search")
       br
       input(type="submit")
