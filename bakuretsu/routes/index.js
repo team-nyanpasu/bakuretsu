@@ -31,7 +31,7 @@ router.get('/search_name', (req, res, next) => {
   ImageData.find({ name: search_name }, function(err, results) {
     if (err) { next(err); return; }
     console.log(results);
-    res.render('search', { img: results[0].path });
+    res.render('search', { images: results.map(a => a.path) });
   });
 });
 
@@ -42,7 +42,7 @@ router.get('/search_hash', (req, res, next) => {
   ImageData.find({ hash: search_hash }, function(err, results) {
     if (err) { next(err); return; }
     console.log(results);
-    res.render('search', { img: results[0].path });
+    res.render('search', { images: results.map(a => a.path) });
   });
 });
 
