@@ -5,18 +5,8 @@ var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 
-const mongoose = require('mongoose')
-
-// schema setup
-
-const ImageData = mongoose.model('ImageData',
-  new mongoose.Schema({
-    path: String,
-    fullpath: String,
-    name: String,
-    time: Date,
-    hash: String
-}));
+var models = require('../models/models');
+const model = models.getModel();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -26,24 +16,18 @@ router.get('/', function(req, res, next) {
 /* GET search */
 router.get('/search_name', (req, res, next) => {
   console.log(req.query);
-  search_name = req.query.search;
-  console.log('searching for ' + search_name);
-  ImageData.find({ name: search_name }, function(err, results) {
-    if (err) { next(err); return; }
-    console.log(results);
-    res.render('search', { images: results.map(a => a.path) });
-  });
+  searchName = req.query.search;
+  console.log('searching for ' + searchName);
+  nameResults = model.getName(searchName);
+  res.render('search', { images: nameResults });
 });
 
 router.get('/search_hash', (req, res, next) => {
   console.log(req.query);
-  search_hash = req.query.search;
-  console.log('searching for ' + search_hash);
-  ImageData.find({ hash: search_hash }, function(err, results) {
-    if (err) { next(err); return; }
-    console.log(results);
-    res.render('search', { images: results.map(a => a.path) });
-  });
+  searchHash = req.query.search;
+  console.log('searching for ' + searchHash);
+  hashResult = model.getHash(searchHash);
+  res.render('search', { images: hashResults });
 });
 
 /* POST fileupload */
@@ -80,10 +64,7 @@ router.post('/fileupload', (req, res, next) => {
     md5sum.update(JSON.stringify(d));
     var h = md5sum.digest();
     d.hash = h.toString('hex');
-    img = new ImageData(d);
-    console.log(img);
-    img.markModified();
-    img.save(function (err, img) {
+    model.post(d, function (err, img) {
       if (err) {
         next(err);
         fs.remove(new_path);
