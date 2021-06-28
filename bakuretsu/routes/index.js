@@ -5,29 +5,31 @@ var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 
-var models = require('../models/models');
-const model = models.getModel();
+var model = require('../models/index');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
   res.render('index', { title: 'Express' });
 });
 
-/* GET search */
-router.get('/search_name', (req, res, next) => {
+/* GET searchName */
+router.get('/searchName', (req, res, next) => {
   console.log(req.query);
   searchName = req.query.search;
   console.log('searching for ' + searchName);
-  nameResults = model.getName(searchName);
-  res.render('search', { images: nameResults });
+  model.getName(searchName, (result) => {
+    res.render('search', { images: result });
+  });
 });
 
-router.get('/search_hash', (req, res, next) => {
+/* GET searchHash */
+router.get('/searchHash', (req, res, next) => {
   console.log(req.query);
   searchHash = req.query.search;
   console.log('searching for ' + searchHash);
-  hashResult = model.getHash(searchHash);
-  res.render('search', { images: hashResults });
+  model.getHash(searchHash, (result) => {
+    res.render('search', { images: result });
+  });
 });
 
 /* POST fileupload */
@@ -42,7 +44,7 @@ router.post('/fileupload', (req, res, next) => {
     old_path = files.fileupload.path;
     filename = path.basename(old_path);
     new_path = './public/images/' + path.basename(old_path);
-    fs.rename(old_path, new_path, function (err) {
+    fs.rename(old_path, new_path, (err) => {
       if (err) {
         next(err);
         fs.unlink(old_path);
@@ -57,17 +59,17 @@ router.post('/fileupload', (req, res, next) => {
     }
     if (!d.name) {
       next(console.log("Error file has no name"));
-      fs.remove(new_path);
+      fs.unlink(new_path);
       return;
     }
     var md5sum = crypto.createHash('md5');
     md5sum.update(JSON.stringify(d));
     var h = md5sum.digest();
     d.hash = h.toString('hex');
-    model.post(d, function (err, img) {
+    model.post(d, (err, img) => {
       if (err) {
         next(err);
-        fs.remove(new_path);
+        fs.unlink(new_path);
         return;
       }
     });

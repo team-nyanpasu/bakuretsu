@@ -20,20 +20,20 @@ class MongoModel {
         hash: String
     }));
   }
-  getName(request) {
-    this.ImageData.find({ name: search_name }, function(err, results) {
-      if (err) { console.log(err); return []; }
-      return results.map(a => a.path);
+  getName(request, callback) {
+    this.ImageData.find({ name: request }, (err, results) => {
+      if (err) { console.log(err); callback(["dummy"]); }
+      callback(results.map(a => a.path));
     });
   }
-  getHash(request) {
-    this.ImageData.find({ hash: search_hash }, function(err, results) {
-      if (err) { console.log(err); return []; }
-      return results.map(a => a.path);
+  getHash(request, callback) {
+    this.ImageData.find({ hash: request }, (err, results) => {
+      if (err) { console.log(err); callback(["dummy"]); }
+      callback(results.map(a => a.path));
     });
   }
   post(request, handler) {
-    img = new this.ImageData(request);
+    let img = new this.ImageData(request);
     console.log(img);
     img.markModified();
     img.save(handler);
@@ -56,7 +56,7 @@ function getModelConstructor() {
 }
 
 function getModel() {
-  return new getModelConstructor();
+  return new (getModelConstructor())();
 }
 
-module.exports = { getModel: getModel };
+module.exports = getModel();
