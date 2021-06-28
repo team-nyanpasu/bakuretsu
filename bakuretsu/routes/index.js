@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var formidable = require('formidable');
-var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 
@@ -41,36 +40,24 @@ router.post('/fileupload', (req, res, next) => {
       next(err);
       return;
     }
-    old_path = files.fileupload.path;
-    filename = path.basename(old_path);
-    new_path = './public/images/' + path.basename(old_path);
-    fs.rename(old_path, new_path, (err) => {
+    oldPath = files.fileupload.path;
+    parsedPath = path.parse(oldPath);
+    newPath = './public/images/' + parsedPath.base;
+    fs.rename(oldPath, newPath, (err) => {
       if (err) {
         next(err);
-        fs.unlink(old_path);
-        return;
+        fs.unlink(oldPath);
       }
     });
-    var d = {
-      path: 'images/' + filename,
-      fullpath: new_path,
-      name: files.fileupload.name,
-      time: Date.now()
+    let request = {
+      path: 'images/' + parsedPath.base,
+      fullpath: newPath,
+      name: path.parse(files.fileupload.name).name
     }
-    if (!d.name) {
-      next(console.log("Error file has no name"));
-      fs.unlink(new_path);
-      return;
-    }
-    var md5sum = crypto.createHash('md5');
-    md5sum.update(JSON.stringify(d));
-    var h = md5sum.digest();
-    d.hash = h.toString('hex');
-    model.post(d, (err, img) => {
+    model.post(request, (err, img) => {
       if (err) {
         next(err);
-        fs.unlink(new_path);
-        return;
+        fs.unlink(newPath);
       }
     });
     res.redirect('/');

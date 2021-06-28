@@ -1,5 +1,6 @@
 const yaml = require('js-yaml');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const mongoose = require('mongoose')
 
@@ -20,20 +21,32 @@ class MongoModel {
         hash: String
     }));
   }
+
   getName(request, callback) {
     this.ImageData.find({ name: request }, (err, results) => {
       if (err) { console.log(err); callback(["dummy"]); }
       callback(results.map(a => a.path));
     });
   }
+
   getHash(request, callback) {
     this.ImageData.find({ hash: request }, (err, results) => {
       if (err) { console.log(err); callback(["dummy"]); }
       callback(results.map(a => a.path));
     });
   }
+
   post(request, handler) {
-    let img = new this.ImageData(request);
+    let d = {
+      path: request.path,
+      fullpath: request.fullpath,
+      name: request.name,
+      time: Date.now()
+    }
+    let md5sum = crypto.createHash('md5');
+    md5sum.update(JSON.stringify(d));
+    d.hash = md5sum.digest().toString('hex');
+    let img = new this.ImageData(d);
     console.log(img);
     img.markModified();
     img.save(handler);
