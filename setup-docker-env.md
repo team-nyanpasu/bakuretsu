@@ -14,7 +14,7 @@ How to Setup a Docker Development Environment on Virtualbox Running Ubuntu LTS
 - Restart the VM to be able to resize your screen and use the clipboard
 - Modify clipboard and file sharing settings by going to the Devices menu on top toolbar
 - Run `sudo apt install docker.io` to install docker
-- Run `sudo docker run -it ubuntu /bin/bash` to launch an Ubuntu docker container and run bash
+- Run `sudo docker run -it -p 3000:3000 ubuntu /bin/bash` to launch an Ubuntu docker container and run bash
 - Run `CTRL-p CTRL-q` from inside the container to detach from the container
 - Run `sudo docker container ls` to see what containers are running
 - Run `sudo docker attach <container_name>` to attach to a running container
