@@ -20,10 +20,6 @@ How to Setup a Docker Development Environment on Virtualbox Running Ubuntu LTS
 - Run `sudo docker attach <container_name>` to attach to a running container
 - You can use this container how ever you want, probably to install gigabytes of npm packages
 
-Don't know exactly how you can view the finished webpage locally from inside docker, will require some extra research for that.
-Very likely you'll need to do some extra work to setup the ports to properly run a webserver inside docker and access the page from the host.
-Can write about that here next time.
-
 
 How to Setup Environment Inside Docker Container
 ================================================
